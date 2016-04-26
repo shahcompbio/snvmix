@@ -1,0 +1,84 @@
+*** SNVMix2_thresold_select.pl ***
+Author: Rodrigo Goya, 01/2010
+
+The script SNVMix2_threshold_select.pl automates parameter training and threshold selection
+with the models described in Goya et al, 2010. Given a pileup file and ground truth data
+(or orthogonal SNP array data), a combination of model types, base quality filters and mapping
+quality filters can be run and their performance evaluated. selecting the best model and
+threshold for a user defined false discovery rate (FDR).
+
+- Pre-requisites:
+Two executables need to be in the user's PATH:
+   $SNVMIX/SNVMix2
+   $SNVMIX/misc/SNVMix2_ROCops.pl
+
+
+- Required input:
+    Pileup file from the sample of interest created using the "samtools pileup" command including
+	base and mapping qualities (-s flag) but NOT including consensus sequence (-c flag), such
+	that lines look like (tab separated):
+		chr1	111222	T	26	@CCCCCCcCCCcCCCccCcccCccCAC	@+?%?56;5?;%BB;%8?8*+@6%;&;	@uv~~q`bf~~~~~~~~~~:V~~x~K~
+
+    Train set ground truth data, a tab-separated file containing in each line a position in the
+	format "chr:pos" and a 1 if a mutation was found at that position (either AB or BB) or 0
+	if a mutation was not found, such as:
+		chr1:111222	1
+		chr2:131451	0
+		...
+
+    Test set ground truth data, a tab-separated file containing in each line a position in the
+	format "chr:pos" and a 1 if a mutation was found at that position (either AB or BB) or 0
+	if a mutation was not found, such as:
+		chr1:111222	1
+		chr2:131451	0
+		...
+
+- Base/Map quality options:
+
+As described in [Goya et al, 2010] SNVMix2 implements different ways of using and filtering base
+and mapping qualities, these options can be selected using three flags provided in this script:
+
+    -b <base Q, either fixed, comma separated list or start:inc:stop>
+    -m <map Q, either fixed, comma separated list or start:inc:stop>
+    -M <model code(s), e.g. MB,m,mb,...>
+
+Such that selecting:
+    -b 1:1:10 -m 20,30 -M MB,m
+
+will evaluate the pertinent base ([1,10]) and mapping quality ({20,30}) combinations for each model selected.
+
+
+- Threshold selection
+
+For each combination of base and mapping quality filters, SNVMix2 will be trained on the positions listed in
+the TRAIN_POS.txt file, a threshold giving a desired FDR will be determined, and then sensitivity, precision,
+f-measure will be measured using the performance of the model and threshold on the positions listed in the
+TEST_POS.txt file.
+
+The model/baseQ/mapQ and corresponding threshold giving the highest f-measure will be outputed, the results
+for all the models evaluated will be optionally written to a file determined with the -o flag.
+
+
+Syntax:
+
+./SNVMix2_threshold_select.pl
+	-p <pileup file>
+	-t <train set, chr:pos 0/1>
+	-T <test set, chr:pos 0/1>
+	-b <base Q, either fixed, comma separated list or start:inc:stop>
+	-m <map Q, either fixed, comma separated list or start:inc:stop>
+	-M <model code(s), e.g. MB,m,mb>
+	-f <desired FDR>
+	-w <work directory>
+	-o <full output file>
+
+   	-h      this message
+
+Example:
+
+./SNVMix2_threshold_select.pl -p PILEUP_FILE.txt -t TRAIN_POS.txt -T TEST_POS.txt -b "1:1:10" -m 30,1 -M MB -f 0.01 -w $WORKDIR/ -o full_scan.txt
+
+
+
+
+

@@ -1,0 +1,76 @@
+//v0.11.8-r5
+Fixed bug related to math.h present when compiling on Ubuntu.
+
+//v0.11.8-r4
+Added interpretation for "<" and ">" signs used by samtools > 0.1.8 to represent
+"skipping" coverage.
+
+Added check to verify number of columns, this is a common cause of errors.
+
+//v0.11.8-r3
+Modified default alpha and beta parameters:
+alpha = (1000, 500, 100)
+beta = (100, 500, 1000)
+
+//v0.11.8
+Nov, 2009
+Added -M option to read alpha, beta and delta from a space separated text file
+	alpha 1 2 3
+	beta 1 2 3
+	delta 1 2 3
+
+Added alpha, beta and delta command line parameters.
+
+BUGFIX: a variable was not being initialized in readModel() which caused segmentation faults randomly.
+
+//v0.11.7
+29 October, 2009
+Changed behaviour of SNVmix1 mode to allow map quality filtering, this was previously done at MAQ's pileup
+generation which samtools does not support.
+
+-t SNVMix1   will now threshold on -q BASEQ and -Q MAPQ , consider the passing qualities to be perfect.
+
+The default values for -q and -Q were changed to more reasonable levels anything Q19 and below is ignored
+unless the user provides -q and -Q values.
+
+//v0.11.5
+16 September, 2009
+rgoya: changed some type definitions from int to unsigned/signed chars, less memory footprint when training
+
+//v0.11.4
+16 September, 2009
+rgoya: Added checks and perrors in some malloc that were missing it
+
+//v0.11.3
+15 September, 2009
+rgoya: Added SNVMix1 functionality with '-t SNVMix1'
+
+//v0.11.2
+24 July, 2009
+rgoya: Fixed a bug that would crash when encountering undercase 'n' as base call in new pileups
+
+21 July, 2009
+// v0.11.1
+rgoya: Fixed a bug that would reset qualitiy settings '-Q' and '-q' to zero if they were specified before '-t',
+	specifying -t before -Q and -q (as was used when testing) had no adverse effects.
+
+16 July, 2009
+// v0.11
+rgoya: Modified train (-T) functionality to check for convergence instead of just continuing for max-iter
+
+Output was changed to include coverage
+// v0.10
+rgoya: Dependency on getline() only for linux, when compiled in MacOSX it uses fgetln()
+	Depends on gcc defining either: __linux__ or __APPLE__
+
+June 2009
+// v0.8
+rgoya: This version of SNVMix2 depends on GNU libraries for function getline(), thus libc >= 4.6.27 is needed.
+	This dependency will be fixed in the future.
+
+//
+Rodrigo Goya, 2009
+rgoya@bcgsc.ca
+
+Sohrab Shah, 2009
+sshah@bccrc.ca
